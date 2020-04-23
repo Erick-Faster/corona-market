@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Cadastro</title>
+{% endblock %}
+
+{% block body %}
+<h1>Cadastro</h1>
+
+    <hr>
+    <h2>Criar novo Usuário:</h2>
+    <form action='/register' method='POST'>
+
+        <label for="name">Nome:</label>
+        <input class="form-control" name='name' id='name' type="text" placeholder="Qual o seu nome?" aria-label="Nome">
+        <br>
+
+        <label for="email">E-Mail:</label>
+        <input class="form-control" name='email' id='email' type="text" placeholder="Qual o seu E-Mail?" aria-label="E-Mail">
+        <br>
+
+        <label for="username">Nome de Usuário:</label>
+        <input class="form-control" name='username' id='username' type="text" placeholder="Qual o seu nome de usuario?" aria-label="Usuário">
+        <br>
+
+        <label for="password">Senha:</label>
+        <input class="form-control" name='password' id='password' type="text" placeholder="Qual a sua senha?" aria-label="Senha">
+        <br>
+
+        <input type='submit' value='Registrar'>
+    </form>
+    <hr>
+
+{% endblock %}

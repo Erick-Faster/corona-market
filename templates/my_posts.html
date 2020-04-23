@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Posts</title>
+{% endblock %}
+
+
+
+{% block body %}
+<br>
+<div>
+    <h1 style="display:inline">Meus Pedidos</h1>
+    <a style="display:inline" class="btn btn-success float-right" href="/posts/new">+ Novo Pedido</a>
+</div>
+    <hr>
+
+
+    {% for quest in quests %}
+    <br>
+        <h2>{{ quest.name }}</h2>
+
+        {% if quest.user_id %}
+            <small>Publicado em {{ quest.date_posted }} </small>
+        {% else %}
+        <small>Escrito por: Desconhecido(a)</small>
+        
+
+        {% endif %}
+        <br>
+        <small>Endereço: {{ quest.address }}</small>
+        <br>
+        <a class="btn btn-success" href='/'>Pedido Concluído</a>
+        <a class="btn btn-primary" href='/posts/edit/{{quest.id}}'>Editar</a>
+        <a class="btn btn-danger" href='/posts/delete/{{quest.id}}'>Deletar</a>
+        <hr>
+    {% endfor %}
+
+{% endblock %}

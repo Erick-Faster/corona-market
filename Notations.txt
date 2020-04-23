@@ -1,0 +1,22 @@
+[1]Em templates, se post.author não existir, o codigo pula informação automaticamente
+[2]Em templates, html:5 já me dá o modelo certinho de html automaticamente no VS code
+[3]No terminal, o comando 'python' permite entrar no environment do python
+[4]Para fazer migration, com o environment python, na pasta:
+    - from app import db
+    - db.create_all()
+[5]Para consultar banco criado:
+    - from app import BlogPost //Nome da classe do db
+    - BlogPost.query.all()
+[6]Para adicionar dados no banco:
+    - db.session.add(BlogPost(title='Blog Post 1', content='contentaaaaa', author='Erick'))
+[7]Para ler dados especificos:
+    - BlogPost.query.all()[0].title
+[8]Pra rodar: python app.py
+[9]Para filtrar posts:
+    - BlogPost.query.filter_by(title='aaa').all()
+[10]Para deletar: db.session.delete(BlogPost.query.get(4))
+[11]Para editar um elemento:
+    - BlogPost.query.get(2).author = 'Another'
+[12]Para salvar as mudanças:
+    - db.session.commit()
+[13]Para BootStrap funcionar, deve colar CSS e JS na base

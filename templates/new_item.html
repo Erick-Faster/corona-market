@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Novo Pedido</title>
+{% endblock %}
+
+{% block body %}
+<h1>Novo Pedido</h1>
+
+    <hr>
+    <h2>Criar novo Pedido:</h2>
+
+
+
+    <form action='/posts/new_item/{{quest.id}}' method='POST'>
+
+        <div class="row">
+            <div class="col">
+
+                <label for="name">Item:</label>
+                <input class="form-control" name='name' id='name' type="text" placeholder="Qual o item?" aria-label="Enter Title">
+            </div>
+                <br>
+            <div class="col">
+                <label for="quantity">Quantidade:</label>
+                <input class="form-control" name='quantity' id='quantity' type="text" placeholder="Qual a quantidade?" aria-label="Enter Author">
+            </div>
+                <br>
+            <div class="col">
+                <label for="address">Preço:</label>
+                <input class="form-control" name='price' id='price' type="text" placeholder="Qual o valor estimado?" aria-label="Enter Address">
+            </div>
+
+        </div>
+        <br>
+
+        <input type='submit' value='Adicionar item'>
+    </form>
+    <hr>
+
+
+
+    <table class="table table-striped">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Item</th>
+            <th scope="col">Quantidade</th>
+            <th scope="col">Preço</th>
+          </tr>
+        </thead>
+        <tbody>
+
+        {% set count = namespace(value=1) %}
+        {% set total = namespace(value=0) %}
+
+        {% for item in quest['items'] %}
+
+            <tr>
+                <th scope="row">{{ count.value }}</th>
+                <td>{{ item.name }}</td>
+                <td>{{ item.quantity }}</td>
+
+                {% set item_price = item.price * item.quantity%}
+                <td>R$ {{'%0.2f'|format(item_price|float)}}</td>
+                
+            </tr>
+
+            {% set count.value = count.value + 1 %}
+            {% set total.value = total.value + item_price %}
+
+
+        {% endfor %}
+
+            <tr class="table-info">
+                <th scope="row"></th>
+                <td></td>
+                <td></td>
+                <td >Total: R$ {{'%0.2f'|format(total.value)}}</td>
+            </tr>
+
+        </tbody>
+      </table>
+
+{% endblock %}

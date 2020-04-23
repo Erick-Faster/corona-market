@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Login</title>
+{% endblock %}
+
+{% block body %}
+<h1>Login</h1>
+
+    <hr>
+    <h2>Login:</h2>
+    <form action='/login' method='POST'>
+
+        <label for="username">Nome de Usuário:</label>
+        <input class="form-control" name='username' id='username' type="text" placeholder="Qual o seu nome de usuario?" aria-label="Usuário">
+        <br>
+
+        <label for="password">Senha:</label>
+        <input class="form-control" name='password' id='password' type="text" placeholder="Qual a sua senha?" aria-label="Senha">
+        <br>
+
+        <input type='submit' value='Login'>
+    </form>
+    <hr>
+
+{% endblock %}
