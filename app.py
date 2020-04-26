@@ -1,12 +1,13 @@
 #Para executar - Comando: python app.py
 #Posso add varias routes com @app.route
 #/ <string:name>, <int:id> etc...
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, flash
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import json, requests
 
 app = Flask(__name__)
+app.secret_key = 'SECRETKEY'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///posts.db'
 db = SQLAlchemy(app)
 
@@ -122,6 +123,50 @@ def edit(id):
         return redirect('/posts')
     else:
         return render_template('edit.html', post = post)
+
+
+@app.route('/posts/accepted/<int:id>', methods=['GET', 'POST'])
+def accepted(id):
+
+    response = requests.get('http://127.0.0.1:5000/request/'+str(id))
+    response = json.loads(response.content)
+
+    data = {'name': response['name'],
+            'address': response['address'],
+            'author': response['author'],
+            'accepted': "Yes",
+            'done': "No",
+            }
+
+    headers = {"Authorization": "Bearer "+ _auth_}
+    url = 'http://127.0.0.1:5000/request/'+str(id)
+    requests.put(url, data = data, headers = headers)
+
+    flash('O pedido foi aceito! Parabéns!')
+
+    return redirect('/posts')
+
+@app.route('/my_posts/done/<int:id>', methods=['GET', 'POST'])
+def done(id):
+
+    response = requests.get('http://127.0.0.1:5000/request/'+str(id))
+    response = json.loads(response.content)
+
+    data = {'name': response['name'],
+            'address': response['address'],
+            'author': response['author'],
+            'accepted': "Yes",
+            'done': "Yes",
+            }
+
+    headers = {"Authorization": "Bearer "+ _auth_}
+    url = 'http://127.0.0.1:5000/request/'+str(id)
+    requests.put(url, data = data, headers = headers)
+
+    flash('O pedido foi encerrado! Parabéns')
+
+    return redirect('/my_posts')
+
 
 @app.route('/posts/new', methods=['GET', 'POST'])
 def new_post():

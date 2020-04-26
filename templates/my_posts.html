@@ -4,9 +4,23 @@
 <title>Posts</title>
 {% endblock %}
 
-
-
 {% block body %}
+
+<div class="container">
+    {% for message in get_flashed_messages() %}
+    <div class="alert alert-success">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+            ×</button>
+       <span class="glyphicon glyphicon-ok"></span> <strong>Pedido Concluído!</strong>
+        <hr class="message-inner-separator">
+        <p>
+            {{message}}</p>
+    </div>
+    {% endfor %}
+
+    {% block page_content %}{% endblock %}
+</div>
+
 <br>
 <div>
     <h1 style="display:inline">Meus Pedidos</h1>
@@ -29,8 +43,16 @@
         <br>
         <small>Endereço: {{ quest.address }}</small>
         <br>
-        <a class="btn btn-success" href='/'>Pedido Concluído</a>
-        <a class="btn btn-primary" href='/posts/edit/{{quest.id}}'>Editar</a>
+
+        {% if quest.done == "No" and quest.accepted == "Yes" %}
+            <a class="btn btn-success" href='/my_posts/done/{{quest.id}}'>Tornar Concluído</a>
+        {% endif %}
+
+        {% if quest.done == "Yes" and quest.accepted == "Yes" %}
+            <a href="#" class="btn btn-secondary disabled" role="button" aria-disabled="true">Pedido concluído</a>  
+        {% endif %}
+
+        <a class="btn btn-primary" href='/posts/new_item/{{quest.id}}'>Editar</a>
         <a class="btn btn-danger" href='/posts/delete/{{quest.id}}'>Deletar</a>
         <hr>
     {% endfor %}
