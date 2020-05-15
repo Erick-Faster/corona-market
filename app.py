@@ -31,28 +31,11 @@ def index():
 def about():
     return render_template('about.html')
 
-@app.route('/home/users/<string:name>/posts/<int:id>') #Localhost
-def hello(name, id):
-    return "Hello, "+name+", your stupid number is " + str(id)
-
-@app.route('/onlyget', methods=['GET']) #Unicos metodos permitidos
-def get_req():
-    response = requests.get('http://127.0.0.1:5080/requests')
-    print(response.status_code)
-
-    quests = json.loads(response.content)
-
-    for quest in quests:
-        print(quest['name'])
-
-    return response.content
-
 @app.route('/posts', methods=['GET', 'POST'])
 def posts():
     if request.method == 'POST':
 
         headers = {"Authorization": "Bearer "+ _auth_}
-
         url = 'http://127.0.0.1:5080/request'
 
         data = {'name': request.form['name'],
@@ -62,7 +45,10 @@ def posts():
                 'done': "No"
                 }
         print("posted")
-        x = requests.post(url, data = data, headers = headers)
+        response = requests.post(url, data = data, headers = headers)
+
+        if response.status_code == 401:
+            return redirect('/login')
 
         return redirect('/my_posts')
     else:
@@ -84,20 +70,27 @@ def my_posts():
                 'done': "No"
                 }
         print("posted")
-        x = requests.post(url, data = data, headers = headers)
+        
+        response = requests.post(url, data = data, headers = headers)
+
+        if response.status_code == 401:
+            return redirect('/login')
 
         return redirect('/my_posts')
         
     else:
         headers = {"Authorization": "Bearer "+ _auth_}
         response = requests.get('http://127.0.0.1:5080/requests_user', headers=headers)
-        currentuser = requests.get('http://127.0.0.1:5080/currentuser', headers=headers)
+
+        if response.status_code == 401:
+            return redirect('/login')
+        #currentuser = requests.get('http://127.0.0.1:5080/currentuser', headers=headers)
 
         print(response.text)
-        print(currentuser.text)
+        #print(currentuser.text)
 
         quests = json.loads(response.content)
-        currentuser = json.loads(currentuser.content)
+        #currentuser = json.loads(currentuser.content)
         return render_template('my_posts.html', quests=quests)
 
 @app.route("/posts/<int:id>")
@@ -110,29 +103,18 @@ def get_quest(id):
 def delete(id):
     headers = {"Authorization": "Bearer "+ _auth_}
     response = requests.delete('http://127.0.0.1:5080/request/'+str(id), headers = headers)
+
+    if response.status_code == 401:
+        return redirect('/login')
     print("Deletado?")
 
     return redirect('/my_posts')
-
-@app.route('/posts/edit/<int:id>', methods=['GET', 'POST'])
-def edit(id):
-
-    post = BlogPost.query.get_or_404(id)
-
-    if request.method == 'POST':
-        post.title = request.form['title']
-        post.author = request.form['author']
-        post.content = request.form['content']
-        db.session.commit()
-        return redirect('/posts')
-    else:
-        return render_template('edit.html', post = post)
-
 
 @app.route('/posts/accepted/<int:id>', methods=['GET', 'POST'])
 def accepted(id):
 
     response = requests.get('http://127.0.0.1:5080/request/'+str(id))
+
     response = json.loads(response.content)
 
     data = {'name': response['name'],
@@ -144,7 +126,10 @@ def accepted(id):
 
     headers = {"Authorization": "Bearer "+ _auth_}
     url = 'http://127.0.0.1:5080/request/'+str(id)
-    requests.put(url, data = data, headers = headers)
+    put_response = requests.put(url, data = data, headers = headers)
+
+    if put_response.status_code == 401:
+        return redirect('/login')
 
     flash('O pedido foi aceito! Parabéns!')
 
@@ -165,7 +150,10 @@ def done(id):
 
     headers = {"Authorization": "Bearer "+ _auth_}
     url = 'http://127.0.0.1:5080/request/'+str(id)
-    requests.put(url, data = data, headers = headers)
+    put_response = requests.put(url, data = data, headers = headers)
+
+    if put_response.status_code == 401:
+        return redirect('/login')
 
     flash('O pedido foi encerrado! Parabéns')
 
@@ -214,7 +202,11 @@ def new_item(quest_id):
         url = 'http://127.0.0.1:5080/item/'+str(request.form['name'])
 
         headers = {"Authorization": "Bearer "+ _auth_}
-        requests.post(url, data = data, headers = headers)
+        response = requests.post(url, data = data, headers = headers)
+
+        if response.status_code == 401:
+            return redirect('/login')
+
         return redirect('/posts/new_item/'+str(quest_id))
     else:
         response = requests.get('http://127.0.0.1:5080/request/'+str(quest_id))
