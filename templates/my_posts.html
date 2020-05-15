@@ -33,7 +33,7 @@
     <br>
         <h2>{{ quest.name }}</h2>
 
-        {% if quest.user_id %}
+        {% if quest.userinfo_id %}
             <small>Publicado em {{ quest.date_posted }} </small>
         {% else %}
         <small>Escrito por: Desconhecido(a)</small>
@@ -53,7 +53,7 @@
         {% endif %}
 
         <a class="btn btn-primary" href='/posts/new_item/{{quest.id}}'>Editar</a>
-        <a class="btn btn-danger" href='/posts/delete/{{quest.id}}'>Deletar</a>
+        <a class="btn btn-danger" href='/my_posts/delete/{{quest.id}}'>Deletar</a>
         <hr>
     {% endfor %}
 

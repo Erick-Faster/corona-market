@@ -27,6 +27,9 @@ class BlogPost(db.Model):
 def index():
     return render_template('index.html')
 
+@app.route('/about')
+def about():
+    return render_template('about.html')
 
 @app.route('/home/users/<string:name>/posts/<int:id>') #Localhost
 def hello(name, id):
@@ -34,7 +37,7 @@ def hello(name, id):
 
 @app.route('/onlyget', methods=['GET']) #Unicos metodos permitidos
 def get_req():
-    response = requests.get('http://127.0.0.1:5000/requests')
+    response = requests.get('http://127.0.0.1:5080/requests')
     print(response.status_code)
 
     quests = json.loads(response.content)
@@ -50,7 +53,7 @@ def posts():
 
         headers = {"Authorization": "Bearer "+ _auth_}
 
-        url = 'http://127.0.0.1:5000/request'
+        url = 'http://127.0.0.1:5080/request'
 
         data = {'name': request.form['name'],
                 'address': request.form['address'],
@@ -63,7 +66,7 @@ def posts():
 
         return redirect('/my_posts')
     else:
-        response = requests.get('http://127.0.0.1:5000/requests')
+        response = requests.get('http://127.0.0.1:5080/requests')
         quests = json.loads(response.content)
         return render_template('posts.html', quests=quests)
 
@@ -72,7 +75,7 @@ def my_posts():
     if request.method == 'POST':
         headers = {"Authorization": "Bearer "+ _auth_}
 
-        url = 'http://127.0.0.1:5000/request'
+        url = 'http://127.0.0.1:5080/request'
 
         data = {'name': request.form['name'],
                 'address': request.form['address'],
@@ -87,8 +90,8 @@ def my_posts():
         
     else:
         headers = {"Authorization": "Bearer "+ _auth_}
-        response = requests.get('http://127.0.0.1:5000/requests_user', headers=headers)
-        currentuser = requests.get('http://127.0.0.1:5000/currentuser', headers=headers)
+        response = requests.get('http://127.0.0.1:5080/requests_user', headers=headers)
+        currentuser = requests.get('http://127.0.0.1:5080/currentuser', headers=headers)
 
         print(response.text)
         print(currentuser.text)
@@ -99,16 +102,17 @@ def my_posts():
 
 @app.route("/posts/<int:id>")
 def get_quest(id):
-    response = requests.get('http://127.0.0.1:5000/request/'+str(id))
+    response = requests.get('http://127.0.0.1:5080/request/'+str(id))
     quest = json.loads(response.content)
     return render_template('quest.html', quest=quest)
 
-@app.route('/posts/delete/<int:id>')
+@app.route('/my_posts/delete/<int:id>')
 def delete(id):
-    post = BlogPost.query.get_or_404(id)
-    db.session.delete(post)
-    db.session.commit()
-    return redirect('/posts')
+    headers = {"Authorization": "Bearer "+ _auth_}
+    response = requests.delete('http://127.0.0.1:5080/request/'+str(id), headers = headers)
+    print("Deletado?")
+
+    return redirect('/my_posts')
 
 @app.route('/posts/edit/<int:id>', methods=['GET', 'POST'])
 def edit(id):
@@ -128,7 +132,7 @@ def edit(id):
 @app.route('/posts/accepted/<int:id>', methods=['GET', 'POST'])
 def accepted(id):
 
-    response = requests.get('http://127.0.0.1:5000/request/'+str(id))
+    response = requests.get('http://127.0.0.1:5080/request/'+str(id))
     response = json.loads(response.content)
 
     data = {'name': response['name'],
@@ -139,7 +143,7 @@ def accepted(id):
             }
 
     headers = {"Authorization": "Bearer "+ _auth_}
-    url = 'http://127.0.0.1:5000/request/'+str(id)
+    url = 'http://127.0.0.1:5080/request/'+str(id)
     requests.put(url, data = data, headers = headers)
 
     flash('O pedido foi aceito! Parabéns!')
@@ -149,7 +153,7 @@ def accepted(id):
 @app.route('/my_posts/done/<int:id>', methods=['GET', 'POST'])
 def done(id):
 
-    response = requests.get('http://127.0.0.1:5000/request/'+str(id))
+    response = requests.get('http://127.0.0.1:5080/request/'+str(id))
     response = json.loads(response.content)
 
     data = {'name': response['name'],
@@ -160,7 +164,7 @@ def done(id):
             }
 
     headers = {"Authorization": "Bearer "+ _auth_}
-    url = 'http://127.0.0.1:5000/request/'+str(id)
+    url = 'http://127.0.0.1:5080/request/'+str(id)
     requests.put(url, data = data, headers = headers)
 
     flash('O pedido foi encerrado! Parabéns')
@@ -174,7 +178,7 @@ def new_post():
 
         headers = {"Authorization": "Bearer "+ _auth_}
 
-        url = 'http://127.0.0.1:5000/request'
+        url = 'http://127.0.0.1:5080/request'
 
         print("posted")
 
@@ -207,13 +211,13 @@ def new_item(quest_id):
                 'request_id': quest_id
                 }
         
-        url = 'http://127.0.0.1:5000/item/'+str(request.form['name'])
+        url = 'http://127.0.0.1:5080/item/'+str(request.form['name'])
 
         headers = {"Authorization": "Bearer "+ _auth_}
         requests.post(url, data = data, headers = headers)
         return redirect('/posts/new_item/'+str(quest_id))
     else:
-        response = requests.get('http://127.0.0.1:5000/request/'+str(quest_id))
+        response = requests.get('http://127.0.0.1:5080/request/'+str(quest_id))
         quest = json.loads(response.content)
         return render_template('new_item.html', quest=quest)
 
@@ -221,13 +225,22 @@ def new_item(quest_id):
 def register():
     if request.method == 'POST':
         
-        url = 'http://127.0.0.1:5000/register'
-        data = {'username': request.form['username'],
-                'password': request.form['password'],
+        url = 'http://127.0.0.1:5080/register'
+        register = {'username': request.form['username'],
+                    'password': request.form['password'],
+                   }
+
+        registerResponse = requests.post(url, data = register)
+        response = json.loads(registerResponse.content)
+
+        data = {'username': response['username'],
                 'name': request.form['name'],
-                'email': request.form['email']
+                'email': request.form['email'],
+                'group': request.form['group'],
+                'user_id': response['id']
                 }
 
+        url = 'http://127.0.0.1:5080/userinfo'
         x = requests.post(url, data = data)
 
         print(x.text)
@@ -240,7 +253,7 @@ def register():
 def login():
     if request.method == 'POST':
         
-        url = 'http://127.0.0.1:5000/login'
+        url = 'http://127.0.0.1:5080/login'
         data = {'username': request.form['username'],
                 'password': request.form['password']
                 }
