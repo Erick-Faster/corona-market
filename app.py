@@ -36,7 +36,7 @@ def posts():
     if request.method == 'POST':
 
         headers = {"Authorization": "Bearer "+ _auth_}
-        url = 'http://127.0.0.1:5080/request'
+        url = 'https://coronamarket-api.herokuapp.com//request'
 
         data = {'name': request.form['name'],
                 'address': request.form['address'],
@@ -52,7 +52,7 @@ def posts():
 
         return redirect('/my_posts')
     else:
-        response = requests.get('http://127.0.0.1:5080/requests')
+        response = requests.get('https://coronamarket-api.herokuapp.com//requests')
         quests = json.loads(response.content)
         return render_template('posts.html', quests=quests)
 
@@ -61,7 +61,7 @@ def my_posts():
     if request.method == 'POST':
         headers = {"Authorization": "Bearer "+ _auth_}
 
-        url = 'http://127.0.0.1:5080/request'
+        url = 'https://coronamarket-api.herokuapp.com//request'
 
         data = {'name': request.form['name'],
                 'address': request.form['address'],
@@ -80,7 +80,7 @@ def my_posts():
         
     else:
         headers = {"Authorization": "Bearer "+ _auth_}
-        response = requests.get('http://127.0.0.1:5080/requests_user', headers=headers)
+        response = requests.get('https://coronamarket-api.herokuapp.com//requests_user', headers=headers)
 
         if response.status_code == 401:
             return redirect('/login')
@@ -95,14 +95,14 @@ def my_posts():
 
 @app.route("/posts/<int:id>")
 def get_quest(id):
-    response = requests.get('http://127.0.0.1:5080/request/'+str(id))
+    response = requests.get('https://coronamarket-api.herokuapp.com//request/'+str(id))
     quest = json.loads(response.content)
     return render_template('quest.html', quest=quest)
 
 @app.route('/my_posts/delete/<int:id>')
 def delete(id):
     headers = {"Authorization": "Bearer "+ _auth_}
-    response = requests.delete('http://127.0.0.1:5080/request/'+str(id), headers = headers)
+    response = requests.delete('https://coronamarket-api.herokuapp.com//request/'+str(id), headers = headers)
 
     if response.status_code == 401:
         return redirect('/login')
@@ -113,7 +113,7 @@ def delete(id):
 @app.route('/posts/accepted/<int:id>', methods=['GET', 'POST'])
 def accepted(id):
 
-    response = requests.get('http://127.0.0.1:5080/request/'+str(id))
+    response = requests.get('https://coronamarket-api.herokuapp.com//request/'+str(id))
 
     response = json.loads(response.content)
 
@@ -125,7 +125,7 @@ def accepted(id):
             }
 
     headers = {"Authorization": "Bearer "+ _auth_}
-    url = 'http://127.0.0.1:5080/request/'+str(id)
+    url = 'https://coronamarket-api.herokuapp.com//request/'+str(id)
     put_response = requests.put(url, data = data, headers = headers)
 
     if put_response.status_code == 401:
@@ -138,7 +138,7 @@ def accepted(id):
 @app.route('/my_posts/done/<int:id>', methods=['GET', 'POST'])
 def done(id):
 
-    response = requests.get('http://127.0.0.1:5080/request/'+str(id))
+    response = requests.get('https://coronamarket-api.herokuapp.com//request/'+str(id))
     response = json.loads(response.content)
 
     data = {'name': response['name'],
@@ -149,7 +149,7 @@ def done(id):
             }
 
     headers = {"Authorization": "Bearer "+ _auth_}
-    url = 'http://127.0.0.1:5080/request/'+str(id)
+    url = 'https://coronamarket-api.herokuapp.com//request/'+str(id)
     put_response = requests.put(url, data = data, headers = headers)
 
     if put_response.status_code == 401:
@@ -166,7 +166,7 @@ def new_post():
 
         headers = {"Authorization": "Bearer "+ _auth_}
 
-        url = 'http://127.0.0.1:5080/request'
+        url = 'https://coronamarket-api.herokuapp.com//request'
 
         print("posted")
 
@@ -199,7 +199,7 @@ def new_item(quest_id):
                 'request_id': quest_id
                 }
         
-        url = 'http://127.0.0.1:5080/item/'+str(request.form['name'])
+        url = 'https://coronamarket-api.herokuapp.com//item/'+str(request.form['name'])
 
         headers = {"Authorization": "Bearer "+ _auth_}
         response = requests.post(url, data = data, headers = headers)
@@ -209,7 +209,7 @@ def new_item(quest_id):
 
         return redirect('/posts/new_item/'+str(quest_id))
     else:
-        response = requests.get('http://127.0.0.1:5080/request/'+str(quest_id))
+        response = requests.get('https://coronamarket-api.herokuapp.com//request/'+str(quest_id))
         quest = json.loads(response.content)
         return render_template('new_item.html', quest=quest)
 
@@ -217,7 +217,7 @@ def new_item(quest_id):
 def register():
     if request.method == 'POST':
         
-        url = 'http://127.0.0.1:5080/register'
+        url = 'https://coronamarket-api.herokuapp.com//register'
         register = {'username': request.form['username'],
                     'password': request.form['password'],
                    }
@@ -232,7 +232,7 @@ def register():
                 'user_id': response['id']
                 }
 
-        url = 'http://127.0.0.1:5080/userinfo'
+        url = 'https://coronamarket-api.herokuapp.com//userinfo'
         x = requests.post(url, data = data)
 
         print(x.text)
@@ -245,7 +245,7 @@ def register():
 def login():
     if request.method == 'POST':
         
-        url = 'http://127.0.0.1:5080/login'
+        url = 'https://coronamarket-api.herokuapp.com//login'
         data = {'username': request.form['username'],
                 'password': request.form['password']
                 }
